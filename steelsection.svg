@@ -1,0 +1,34 @@
+﻿<svg id="{{cdId}}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  cd-viewbox="{{-sectionLineCutDimension}} {{-sectionLineCutDimension}} {{(sectionData.visibleLength+2*sectionLineCutDimension)*3}} {{(sectionData.overallDepth+2*sectionLineCutDimension)*3}}"
+  preserveAspectRatio="xMinYMin meet" ng-attr-width="{{(sectionData.visibleLength+2*sectionLineCutDimension)*3}}" ng-attr-height="{{(sectionData.overallDepth+2*sectionLineCutDimension)*3}}">
+
+  <defs>
+    <path id="{{cdId}}_sectionLineWithCut" ng-attr-d="M0 {{-sectionLineCutDimension}} l0 {{sectionLineCutDimension + sectionData.overallDepth/2 - 2*sectionLineCutDimension}}
+          l{{-sectionLineCutDimension}} {{sectionLineCutDimension}} l{{2*sectionLineCutDimension}} {{2*sectionLineCutDimension}} 
+          l{{-sectionLineCutDimension}} {{+sectionLineCutDimension}} l0 {{sectionData.overallDepth/2 - 2*sectionLineCutDimension + sectionLineCutDimension}}"
+          vector-effect="non-scaling-stroke" stroke="green" fill="none" stroke-width="2"/>
+
+    <path id="{{cdId}}_flangeLine" ng-attr-d="M0 0 l{{sectionData.visibleLength}} 0 "
+          vector-effect="non-scaling-stroke" stroke="green" fill="none" stroke-width="2"/>
+
+    <path id="{{cdId}}_sectionLineWithoutCut" ng-attr-d="M0 0 l0 {{sectionData.overallDepth}}"
+      vector-effect="non-scaling-stroke" stroke="green" fill="none" stroke-width="2"/>
+  </defs>
+  
+  <g>
+    <use xlink:href="{{cdId+'_sectionLineWithCut' | trustInternalUrl}}" x="0" y="0" ng-if="sectionData.showStartSectionLineCut===true"></use>
+    <use xlink:href="{{cdId+'_sectionLineWithoutCut' | trustInternalUrl}}" x="0" y="0" ng-if="sectionData.showStartSectionLineCut===false"/>
+    <use xlink:href="{{cdId+'_sectionLineWithCut' | trustInternalUrl}}" ng-attr-x="{{sectionData.visibleLength}}" y="0" ng-if="sectionData.showEndSectionLineCut===true"></use>
+    <use xlink:href="{{cdId+'_sectionLineWithoutCut' | trustInternalUrl}}" ng-attr-x="{{sectionData.visibleLength}}" y="0" ng-if="sectionData.showEndSectionLineCut===false"/>
+
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" y="0" />
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" ng-attr-y="{{sectionData.flangeThickness}}" />
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" ng-attr-y="{{sectionData.overallDepth}}" />
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" ng-attr-y="{{sectionData.overallDepth - sectionData.flangeThickness}}" />
+    
+   </g>
+  
+  <!--<text ng-attr-x="{{sectionLineCutDimension + sectionData.overallDepth/2}}" ng-attr-y ="{{sectionLineCutDimension + sectionData.visibleLength/2 }}"
+          ng-attr-font-size="{{fontScale}}" text-anchor="middle">457x191x161 UKB</text>-->
+</svg>
+

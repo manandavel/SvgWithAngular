@@ -1,0 +1,21 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="steelBeamColumnConnection"
+  cd-viewbox="{{-sectionLineCutDimension*2}} {{-sectionLineCutDimension*2}}
+  {{connection.columnSection.overallDepth + sectionLineCutDimension*4 + connection.clearanceGap + connection.beamSection.visibleLength}}
+  {{ connection.columnSection.visibleLength + sectionLineCutDimension*4}}">
+
+  <defs>
+    <cd-steel-section cd-id="beamSection" section_data="{{connection.beamSection}}" section-line-cut-dimension="{{sectionLineCutDimension}}"></cd-steel-section>
+    <cd-steel-section cd-id="columnSection" section_data="{{connection.columnSection}}" section-line-cut-dimension="{{sectionLineCutDimension}}"></cd-steel-section>
+    <cd-fin-plate cd-id="finPlate" fin-plate-data="{{connection.finPlate}}"></cd-fin-plate>
+  </defs>
+
+  <use xlink:href="#beamSection" ng-attr-transform="translate({{connection.columnSection.overallDepth + connection.clearanceGap}})"></use>
+  <use xlink:href="#columnSection" ng-attr-transform="translate({{connection.columnSection.overallDepth}}) rotate(90)"></use>
+  <use xlink:href="#finPlate" ng-attr-transform="translate({{connection.columnSection.overallDepth}} {{connection.beamSection.overallDepth/2}}) rotate(-90) scale(-1,1)"></use>
+
+</svg>
+
+

@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+    <title>Test Snap SVG</title>
+
+
+    <script src="./scripts/angular.js"></script>
+    <script src="./scripts/snap/snap.svg.js"></script>
+
+    <script lang="javascript" type="text/javascript">
+        'use strict';
+        var myApp = angular.module("myApp", []);
+
+        (function () {
+
+            myApp.directive("cdViewbox", function () {
+                return {
+                    link: function (scope, element, attributes) {
+                        attributes.$observe("cdViewbox", function (newValue) {
+                            element.attr("viewBox", attributes.cdViewbox);
+                        });
+                    }
+                };
+            });
+
+            myApp.directive("cdSteelSection", function () {
+                return {
+                    restrict: "E",
+                    replace: true,
+                    scope: {
+                        cdId: "@cdId",
+                        section_line_cut_dimension: "@sectionLineCutDimension",
+                        section_data: "@sectionData",
+                    },
+                    templateUrl: "steelsection.svg",
+                    link: function (scope, element, attributes) {
+                        scope.sectionData = angular.fromJson(scope.section_data);
+                        scope.sectionLineCutDimension = parseInt(scope.section_line_cut_dimension);
+
+                        scope.$watch("section_data", function () {
+                            scope.sectionData = angular.fromJson(scope.section_data);
+                        });
+                        scope.$watch("section_line_cut_dimension", function () {
+                            scope.sectionLineCutDimension = parseInt(scope.section_line_cut_dimension);
+                        });
+
+
+                        attributes.$observe("x", function (newValue) {
+                            element.attr("x", parseInt(attributes.x || 0) - scope.sectionLineCutDimension);
+                        });
+                        attributes.$observe("y", function (newValue) {
+                            element.attr("y", parseInt(attributes.y || 0) - scope.sectionLineCutDimension);
+                        });
+                    }
+                }
+            });
+
+            myApp.directive("cdFinPlate", function () {
+                return {
+                    restrict: "E",
+                    replace: true,
+                    scope: {
+                        cdId: "@cdId",
+                        fin_plate_data: "@finPlateData",
+                        boltColArray: "@boltColArray",
+                        boltRowArray: "@boltColArray"
+                },
+                    templateUrl: "finplate.svg",
+                    link: function (scope, element, attributes) {
+                        scope.finPlateData = angular.fromJson(scope.fin_plate_data);
+                        scope.boltColArray = new Array(scope.finPlateData.boltColsCount);
+                        scope.boltRowArray = new Array(scope.finPlateData.boltRowsCount);
+
+                        scope.$watch("fin_plate_data", function () {
+                            scope.finPlateData = angular.fromJson(scope.fin_plate_data);
+                            scope.boltColArray = new Array(scope.finPlateData.boltColsCount);
+                            scope.boltRowArray = new Array(scope.finPlateData.boltRowsCount);
+                        });
+
+                        attributes.$observe("x", function (newValue) {
+                            element.attr("x", parseInt(attributes.x || 0) - 10 - scope.finPlateData.length/2);
+                        });
+                        attributes.$observe("y", function (newValue) {
+                            element.attr("y", parseInt(attributes.y || 0) - 10);
+                        });
+
+                        //console.log("cdFinPlate link scope", scope);
+                        console.log("colArray", scope.boltColArray);
+
+                    }
+                }
+            });
+
+
+        }());
+
+        myApp.filter('trustInternalUrl', ['$sce', function ($sce) {
+            return function (val) {
+                var s = $sce.trustAsResourceUrl('#' + val);
+                return s;
+            };
+        }]);
+
+
+        function SteelSection() {
+            this.overallDepth = 400;
+            this.flangeThickness = 20;
+            this.visibleLength = 600;
+            this.showStartSectionLineCut = true;
+            this.showEndSectionLineCut = true;
+        }
+
+        //function SteelSectionFactory() {
+        //    return new function () {
+        //        this.createSteelSection = function () {
+        //            return new SteelSection();
+        //        }
+        //    };
+        //}
+        //myApp.factory("steelSectionFactory", SteelSectionFactory);
+
+        function FinPlate() {
+            this.length = 250;
+            this.width = 150;
+            this.boltRowsCount = 2;
+            this.boltRowStartOffset = 50;
+            this.boltRowSpacing = 40;
+            this.boltColsCount = 4;
+            this.boltColStartOffset = 40;
+            this.boltColSpacing = 50;
+        }
+        // Fin Plate - Length, Width, BoltRowsCount, BoltRowStartOffset, BoltRowSpacing, BoltColsCount, BoltColStartOffset, BoltColSpacing,
+
+
+        function Connection() {
+            this.connectionType = "BeamColumnConnection";
+            this.columnSection = new SteelSection();
+            this.beamSection = new SteelSection();
+            this.clearanceGap = 25;
+            this.finPlate = new FinPlate();
+        }
+
+        function ConnectionFactory() {
+            return new function () {
+                this.createConnection = function () {
+                    return new Connection();
+                }
+            };
+        }
+        myApp.factory("connectionFactory", ConnectionFactory);
+
+
+        function MyController($scope, connectionFactory) {
+            $scope.connection = connectionFactory.createConnection();
+
+            $scope.connection.beamSection.showStartSectionLineCut = false;
+
+            $scope.sectionLineCutDimension = 10;
+
+           
+        }
+
+        myApp.controller("myController", MyController);
+    </script>
+</head>
+
+<body ng-app="myApp">
+    <div ng-controller="myController" width="100%">
+        <div style="display: inline-block; *display: inline; vertical-align: top; width:49%; border:solid">
+            <div style="display: inline-block; *display: inline; vertical-align: top; border:solid; width:100%">
+                <h2>Display attributes</h2>
+                Section Line Cut Dimension  : <input type="number" ng-model="sectionLineCutDimension" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Clearance Gap  : <input type="number" ng-model="connection.clearanceGap" ng-model-options="{ updateOn: 'blur'}" /> <br />
+                <br />
+            </div>
+            <div style="display: inline-block; *display: inline; vertical-align: top; width:100%">
+                <div style="display: inline-block; *display: inline; vertical-align: top; width:100%; border:solid">
+                    <h2>Column section data</h2>
+                    Overall Depth : <input type="number" ng-model="connection.columnSection.overallDepth" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                    Flange Thickness : <input type="number" ng-model="connection.columnSection.flangeThickness" ng-model-options="{ updateOn: 'blur'}" /><br /><br />
+                    Visible Length : <input type="number" ng-model="connection.columnSection.visibleLength" ng-model-options="{ updateOn: 'blur'}" /><br /><br />
+                    Show Start Section Line Cut : <input type="checkbox" ng-model="connection.columnSection.showStartSectionLineCut" /><br /><br />
+                    Show End Section Line Cut : <input type="checkbox" ng-model="connection.columnSection.showEndSectionLineCut" /><br />
+                    <br />
+                </div>
+                <div style="display: inline-block; *display: inline; vertical-align: top; width:100%; border:solid">
+                    <h2>Beam section data</h2>
+                    Overall Depth : <input type="number" ng-model="connection.beamSection.overallDepth" ng-model-options="{ updateOn: 'blur'}" /> <br /> <br />
+                    Flange Thickness : <input type="number" ng-model="connection.beamSection.flangeThickness" ng-model-options="{ updateOn: 'blur'}" /> <br /> <br />
+                    Visible Length : <input type="number" ng-model="connection.beamSection.visibleLength" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                    Show Start Section Line Cut : <input type="checkbox" ng-model="connection.beamSection.showStartSectionLineCut" /> <br /><br />
+                    Show End Section Line Cut : <input type="checkbox" ng-model="connection.beamSection.showEndSectionLineCut" /> <br />
+                    <br />
+                </div>
+            </div>
+            <div style="display: inline-block; *display: inline; vertical-align: top; width:100%; border:solid">
+                <h2>Fin Plate Data</h2>
+                Length : <input type="number" ng-model="connection.finPlate.length" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Width : <input type="number" ng-model="connection.finPlate.width" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Bolt Rows Count : <input type="number" ng-model="connection.finPlate.boltRowsCount" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Bolt Row Start Offset : <input type="number" ng-model="connection.finPlate.boltRowStartOffset" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Bolt Row Spacing : <input type="number" ng-model="connection.finPlate.boltRowSpacing" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Bolt Cols Count : <input type="number" ng-model="connection.finPlate.boltColsCount" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Bolt Col Start Offset : <input type="number" ng-model="connection.finPlate.boltColStartOffset" ng-model-options="{ updateOn: 'blur'}" /> <br /><br />
+                Bolt Col Spacing<input type="number" ng-model="connection.finPlate.boltColSpacing" ng-model-options="{ updateOn: 'blur'}" /> <br />
+                <br />
+            </div>
+        </div>
+
+        <div ng-switch on="connection.connectionType" style="display: inline-block; *display: inline; vertical-align: top; border:solid; width:49%">
+            <div ng-switch-when="BeamColumnConnection">
+                <svg id="svgsection" ng-include="'BeamColumnConnection.svg'" width="100%" height="675" preserveAspectRatio="xMidYMid meet"></svg>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

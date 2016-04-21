@@ -1,0 +1,51 @@
+﻿<svg id="{{cdId}}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  cd-viewbox="-10 -10 {{finPlateData.length*2}} {{finPlateData.width*2}}"
+  preserveAspectRatio="xMinYMin meet" ng-attr-width="{{finPlateData.length*2}}" ng-attr-height="{{finPlateData.width*2}}">
+
+  <defs>
+    <g id="boltRow">
+      <circle ng-repeat="i in boltColArray track by $index" ng-attr-cx="{{$index * finPlateData.boltColSpacing + 10/2}}" ng-attr-cy="{{10/2}}" ng-attr-r="{{10}}" 
+              fill="black"></circle>
+    </g>
+  </defs>
+
+
+  <g>
+    <rect x="0" y="0" ng-attr-width="{{finPlateData.length}}" ng-attr-height="{{finPlateData.width}}"
+          vector-effect="non-scaling-stroke" stroke="blue" fill="white" stroke-width="1"></rect>
+    <line x1="0" y1="0" x2="{{finPlateData.length}}" y2="0" stroke="red" fill="none" stroke-width="5"></line>
+
+    <use ng-repeat="i in boltRowArray track by $index" xlink:href="#boltRow" ng-attr-transform="translate({{finPlateData.boltColStartOffset}} {{finPlateData.boltRowStartOffset + $index*finPlateData.boltRowSpacing}})"></use>
+  </g>
+
+
+  <!--<defs>
+    <path id="{{cdId}}_sectionLineWithCut" ng-attr-d="M0 {{-sectionLineCutDimension}} l0 {{sectionLineCutDimension + sectionData.overallDepth/2 - 2*sectionLineCutDimension}}
+          l{{-sectionLineCutDimension}} {{sectionLineCutDimension}} l{{2*sectionLineCutDimension}} {{2*sectionLineCutDimension}} 
+          l{{-sectionLineCutDimension}} {{+sectionLineCutDimension}} l0 {{sectionData.overallDepth/2 - 2*sectionLineCutDimension + sectionLineCutDimension}}"
+          vector-effect="non-scaling-stroke" stroke="red" fill="none" stroke-width="1"/>
+
+    <path id="{{cdId}}_flangeLine" ng-attr-d="M0 0 l{{sectionData.visibleLength}} 0 "
+          vector-effect="non-scaling-stroke" stroke="red" fill="none" stroke-width="1"/>
+
+    <path id="{{cdId}}_sectionLineWithoutCut" ng-attr-d="M0 0 l0 {{sectionData.overallDepth}}"
+      vector-effect="non-scaling-stroke" stroke="red" fill="none" stroke-width="1"/>
+  </defs>
+  
+  <g>
+    <use xlink:href="{{cdId+'_sectionLineWithCut' | trustInternalUrl}}" x="0" y="0" ng-if="sectionData.showStartSectionLineCut===true"></use>
+    <use xlink:href="{{cdId+'_sectionLineWithoutCut' | trustInternalUrl}}" x="0" y="0" ng-if="sectionData.showStartSectionLineCut===false"/>
+    <use xlink:href="{{cdId+'_sectionLineWithCut' | trustInternalUrl}}" ng-attr-x="{{sectionData.visibleLength}}" y="0" ng-if="sectionData.showEndSectionLineCut===true"></use>
+    <use xlink:href="{{cdId+'_sectionLineWithoutCut' | trustInternalUrl}}" ng-attr-x="{{sectionData.visibleLength}}" y="0" ng-if="sectionData.showEndSectionLineCut===false"/>
+
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" y="0" />
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" ng-attr-y="{{sectionData.flangeThickness}}" />
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" ng-attr-y="{{sectionData.overallDepth}}" />
+    <use xlink:href="{{cdId+'_flangeLine' | trustInternalUrl}}" x="0" ng-attr-y="{{sectionData.overallDepth - sectionData.flangeThickness}}" />
+    
+   </g>-->
+
+  <!--<text ng-attr-x="{{sectionLineCutDimension + sectionData.overallDepth/2}}" ng-attr-y ="{{sectionLineCutDimension + sectionData.visibleLength/2 }}"
+          ng-attr-font-size="{{fontScale}}" text-anchor="middle">457x191x161 UKB</text>-->
+</svg>
+
